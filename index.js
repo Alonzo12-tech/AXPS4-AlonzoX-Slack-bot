@@ -1,6 +1,6 @@
 require("dotenv").config();
-
 const { App } = require("@slack/bolt");
+const axios = require('axios');
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -8,6 +8,7 @@ const app = new App({
   socketMode: true
 });
 
+// 1. Ping Command
 app.command("/alonzox-ping", async ({ command, ack, respond }) => {
   const start = Date.now();
   await ack();
@@ -15,22 +16,9 @@ app.command("/alonzox-ping", async ({ command, ack, respond }) => {
   await respond({ text: `Pong!\nLatency: ${latency}ms` });
 });
 
-(async () => {
-  await app.start();
-  console.log("AlonzoX is running!");
-})();
-app.command("/hello", async ({ ack, respond }) => {
-  // Acknowledge the command request right away (must be within ~3 seconds)
-  await ack();
-
-  // Send a message back to the user
-  await respond("Yo! AlonzoX here! Need help?");
-});
-const axios = require('axios');
-
-// 1. Live Cat Fact API (Dynamic)
+// 2. Cat Fact Command
 app.command("/alonzox-catfact", async ({ ack, respond }) => {
-  await ack(); // Tell Slack immediately so it doesn't time out
+  await ack();
   try {
     const res = await axios.get("https://catfact.ninja/fact");
     await respond({ text: `🐱 **Cat Fact:**\n${res.data.fact}` });
@@ -39,7 +27,7 @@ app.command("/alonzox-catfact", async ({ ack, respond }) => {
   }
 });
 
-// 2. Live Insult / Roast API (Dynamic)
+// 3. Roast Command
 app.command("/alonzox-roast", async ({ ack, respond }) => {
   await ack();
   try {
@@ -50,7 +38,7 @@ app.command("/alonzox-roast", async ({ ack, respond }) => {
   }
 });
 
-// 3. Live Joke API (Dynamic)
+// 4. Joke Command
 app.command("/alonzox-joke", async ({ ack, respond }) => {
   await ack();
   try {
@@ -61,17 +49,23 @@ app.command("/alonzox-joke", async ({ ack, respond }) => {
   }
 });
 
-// 4. Coin Toss (Dynamic randomizer)
+// 5. Coin Toss Command
 app.command("/alonzox-toss", async ({ ack, respond }) => {
   await ack();
   const result = Math.random() < 0.5 ? "Heads 🪙" : "Tails 🪙";
   await respond({ text: `Coin Toss Result: **${result}**` });
 });
 
-// 5. Info Command
+// 6. Info Command
 app.command("/alonzox-info", async ({ ack, respond }) => {
   await ack();
   await respond({
     text: "🎮 **AlonzoX PS4 Emulator Bot**\nBuilding a custom PS4 emulator to fix pixelation and PostFX glitches."
   });
 });
+
+// Start the app
+(async () => {
+  await app.start();
+  console.log("AlonzoX is running!");
+})();
