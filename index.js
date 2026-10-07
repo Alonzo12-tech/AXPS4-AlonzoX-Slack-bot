@@ -1,6 +1,6 @@
 require("dotenv").config();
 const { App } = require("@slack/bolt");
-const axios = require('axios');
+const axios = require("axios");
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -9,7 +9,7 @@ const app = new App({
 });
 
 // 1. Ping Command
-app.command("/alonzox-ping", async ({ command, ack, respond }) => {
+app.command("/alonzox-ping", async ({ ack, respond }) => {
   const start = Date.now();
   await ack();
   const latency = Date.now() - start;
@@ -27,14 +27,14 @@ app.command("/alonzox-catfact", async ({ ack, respond }) => {
   }
 });
 
-// 3. Roast Command
+// 3. Joke / Roast Command (Using a reliable working API)
 app.command("/alonzox-roast", async ({ ack, respond }) => {
   await ack();
   try {
-    const res = await axios.get("https://evilinsult.com/generate_insult.php?lang=en&type=json");
-    await respond({ text: `🔥 **Roast:**\n${res.data.insult}` });
+    const res = await axios.get("https://v2.jokeapi.dev/joke/Pun?type=single");
+    await respond({ text: `🔥 **Roast / Joke:**\n${res.data.joke}` });
   } catch (err) {
-    await respond({ text: "Failed to fetch a roast, but you're doing great anyway!" });
+    await respond({ text: "Failed to fetch a roast right now!" });
   }
 });
 
@@ -64,7 +64,6 @@ app.command("/alonzox-info", async ({ ack, respond }) => {
   });
 });
 
-// Start the app
 (async () => {
   await app.start();
   console.log("AlonzoX is running!");
