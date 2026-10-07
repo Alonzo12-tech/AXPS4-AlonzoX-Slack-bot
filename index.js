@@ -40,11 +40,10 @@ app.command("/alonzox-catfact", async ({ ack, respond }) => {
 });
 
 // 2. Live Insult / Roast API (Dynamic)
-app.command("/alonzo-roast", async ({ ack, respond }) => {
+app.command("/alonzox-roast", async ({ ack, respond }) => {
   await ack();
   try {
-    // evilinsult API returns plain text or JSON depending on params
-    const res = await axios.get("https://evilinsult.com/generateinsult.php?lang=en&json");
+    const res = await axios.get("https://evilinsult.com/generate_insult.php?lang=en&type=json");
     await respond({ text: `🔥 **Roast:**\n${res.data.insult}` });
   } catch (err) {
     await respond({ text: "Failed to fetch a roast, but you're doing great anyway!" });
