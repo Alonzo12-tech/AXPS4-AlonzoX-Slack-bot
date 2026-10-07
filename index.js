@@ -16,19 +16,19 @@ app.command("/alonzox-ping", async ({ command, ack, respond }) => {
   await respond({ text: `Pong!\nLatency: ${latency}ms` });
 });
 
-(async () => {
-  await app.start();
-  console.log("AlonzoX is running!");
-})();
 app.command("/alonzox-help", async ({ ack, respond }) => {
   await ack();
   await respond({
     text:
 `Available Commands:
 /alonzox-ping - Check bot latency
-/alonzox-catfact - Get a cat fact`
+/alonzox-catfact - Get a cat fact
+/alonzox-joke - Get a random joke
+/alonzox-toss - Flip a coin (Heads or Tails)
+/alonzox-roast - Roast yourself or a tagged friend live`
   });
 });
+
 app.command("/alonzox-catfact", async ({ ack, respond }) => {
   await ack();
 
@@ -39,6 +39,7 @@ app.command("/alonzox-catfact", async ({ ack, respond }) => {
     await respond({ text: "Failed to fetch a cat fact." });
   }
 });
+
 app.command("/alonzox-joke", async ({ ack, respond }) => {
   await ack();
 
@@ -54,10 +55,24 @@ ${response.data.punchline}`
     await respond({ text: "Failed to fetch a joke." });
   }
 });
+
 app.command("/alonzox-toss", async ({ ack, respond }) => {
   await ack();
   const result = Math.random() < 0.5 ? "Heads 🪙" : "Tails 🪙";
   await respond({ text: `🪙 The coin landed on: *${result}*!` });
+});
+
+// Live Roast API Command
+app.command("/alonzox-roast", async ({ command, ack, respond }) => {
+  await ack();
+  const target = command.text.trim() ? command.text.trim() : `<@${command.user_id}>`;
+
+  try {
+    const response = await axios.get("https://evilinsult.com/generate_insult.php?lang=en&type=json");
+    await respond({ text: `🔥 Hey ${target}, ${response.data.insult}` });
+  } catch (err) {
+    await respond({ text: `🔥 Hey ${target}, I tried to roast you, but your existence is already roast enough.` });
+  }
 });
 
 (async () => {
