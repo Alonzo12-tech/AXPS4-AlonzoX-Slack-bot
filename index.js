@@ -54,3 +54,13 @@ ${response.data.punchline}`
     await respond({ text: "Failed to fetch a joke." });
   }
 });
+app.command("/alonzox-toss", async ({ ack, respond }) => {
+  await ack();
+  const result = Math.random() < 0.5 ? "Heads 🪙" : "Tails 🪙";
+  await respond({ text: `🪙 The coin landed on: *${result}*!` });
+});
+
+(async () => {
+  await app.start();
+  console.log("AlonzoX is running!");
+})();
